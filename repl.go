@@ -23,16 +23,18 @@ func startRepl() {
 			continue
 		}
 
-		firstWord := words[0]
+		commandName := words[0]
 
-		val, ok := aMap[firstWord]
-		if !ok {
+		command, exists := getCommands()[commandName]
+		if exists {
+			err := command.callback()
+			if err != nil {
+				fmt.Println(err)
+			}
+			continue
+		} else {
 			fmt.Println("Unknown command")
 			continue
-		}
-		err := val.callback()
-		if err != nil {
-			fmt.Println(err)
 		}
 	}
 }
@@ -43,16 +45,17 @@ func cleanInput(text string) []string {
 	return words
 }
 
-func commandExit() error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
-	return nil
-}
-
-func commandHelp() error {
-	fmt.Println("Welcome to the Pokedex!\nUsage:\n")
-	for key, value := range aMap {
-		fmt.Println(key + ": " + value.description)
+func getCommands() map[string]cliCommand {
+	return map[string]cliCommand{
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
+		},
+		"help": {
+			name:        "help",
+			description: "Displays a help message",
+			callback:    commandHelp,
+		},
 	}
-	return nil
 }
