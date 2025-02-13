@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
-)
 
-var url = "https://pokeapi.co/api/v2/location-area"
+	"github.com/uskocoglu/pokedex/internal/pokeapi"
+)
 
 type cliCommand struct {
 	name 		string
@@ -16,8 +16,9 @@ type cliCommand struct {
 }
 
 type config struct {
-	Next	 *string
-	Previous *string
+	pokeapiClient    pokeapi.Client
+	nextLocationsURL *string
+	prevLocationsURL *string
 }
 
 type LocationAreas struct {
@@ -30,7 +31,7 @@ type LocationAreas struct {
 	} `json:"results"`
 }
 
-func startRepl() {
+func startRepl(conf *config) {
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
@@ -44,7 +45,7 @@ func startRepl() {
 
 		command, exists := getCommands()[commandName]
 		if exists {
-			err := command.callback(&conf)
+			err := command.callback(conf)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -62,11 +63,6 @@ func cleanInput(text string) []string {
 	return words
 }
 
-var conf = config{
-	Next: &url,
-	Previous: nil,
-}
-
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
 		"exit": {
@@ -81,12 +77,12 @@ func getCommands() map[string]cliCommand {
 		},
 		"map": {
 			name:		 "map",
-			description: "Displays the names of next 20 location",
-			callback:	 commandMap,
+			description: "Get the next page of locations",
+			callback:	 commandMapf,
 		},
 		"mapb": {
 			name:		 "mapb",
-			description: "Displays the names of previous 20 location",
+			description: "Get the previous page of locations",
 			callback:	 commandMapb,
 		},
 	}
