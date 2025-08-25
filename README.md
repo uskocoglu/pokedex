@@ -1,15 +1,15 @@
 # pokedex
 To run:
 
-->go build
-->./pokedex
+->go build  
+->./pokedex    
 
 Available commands are:
-catch
-explore
-help
-inspect
-map
-pokedex
-exit
+catch  
+explore  
+help  
+inspect  
+map  
+pokedex  
+exit  
 
