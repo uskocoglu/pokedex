@@ -4,7 +4,7 @@ To run:
 ->go build  
 ->./pokedex    
 
-Available commands are:
+Available commands are:  
 catch  
 explore  
 help  
